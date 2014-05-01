@@ -10,7 +10,7 @@ irq_handle(struct TrapFrame *tf) {
 		uint32_t val = in_byte(0x61);
 		out_byte(0x61, val | 0x80);
 		out_byte(0x61, val);
-		printf("%d\n",code);
+		printf("code is : %d\n",code);
 	} else {
 		assert(0);
 	}
