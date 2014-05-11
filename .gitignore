@@ -9,3 +9,5 @@
 *.exe
 kernel
 boot/bootblock
+
+tags
