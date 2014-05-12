@@ -13,7 +13,7 @@ entry(void) {
 
 
 	enable_interrupt();
-	asm volatile("int $0x80");
+//	asm volatile("int $0x80");
 	while (1) {
 		wait_for_interrupt();
 	}
