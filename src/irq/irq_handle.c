@@ -3,15 +3,15 @@
 
 void
 irq_handle(struct TrapFrame *tf) {
-//	if(tf->irq < 1000){
-//		if(tf->irq == -1){
-//			printf("%s, %d: Unhandled exception!\n",__FUNCTION__,__LINE__);
-//		}
-//		else{
-//			printf("%s, %d: Unexpected exception %d!\n",__FUNCTION__,__LINE__, tf->irq);
-//		}
-//		assert(0);
-//	}
+	if(tf->irq < 1000){
+		if(tf->irq == -1){
+			printf("%s, %d: Unhandled exception!\n",__FUNCTION__,__LINE__);
+		}
+		else{
+			printf("%s, %d: Unexpected exception %d!\n",__FUNCTION__,__LINE__, tf->irq);
+		}
+		assert(0);
+	}
 
 
 	if (tf->irq == 1000) {
