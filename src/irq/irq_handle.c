@@ -13,7 +13,6 @@ irq_handle(struct TrapFrame *tf) {
 		assert(0);
 	}
 
-
 	if (tf->irq == 1000) {
 		printf(".");
 	} else if (tf->irq == 1001) {
