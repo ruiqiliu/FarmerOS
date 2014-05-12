@@ -5,7 +5,7 @@ void
 irq_handle(struct TrapFrame *tf) {
 	if(tf->irq < 1000){
 		if(tf->irq == -1){
-			printf("%s, %d: Unhandled exception!\n",__FUNCTION__,__LINE__);
+			printf("%s, %d: Unhandled exception %d! \n",__FUNCTION__,__LINE__, tf->irq);
 		}
 		else{
 			printf("%s, %d: Unexpected exception %d!\n",__FUNCTION__,__LINE__, tf->irq);
