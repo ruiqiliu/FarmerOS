@@ -24,8 +24,8 @@ struct GateDescriptor {
 struct TrapFrame {
 	uint32_t edi, esi, ebp, xxx, ebx, edx, ecx, eax;// no esp
 	int32_t irq;
-	uint32_t gs, fs, es, ds;
-	uint32_t err, eip, cs, eflags;
+//	uint32_t gs, fs, es, ds;
+//	uint32_t err, eip, cs, eflags;
 };
 typedef struct TrapFrame TrapFrame;
 

@@ -17,6 +17,8 @@ CFILES = $(shell find src/ -name "*.c")
 SFILES = $(shell find src/ -name "*.S")
 OBJS = $(CFILES:.c=.o) $(SFILES:.S=.o)
 
+all: kernel.img 
+	
 kernel.img: kernel
 	@cd boot; make
 	cat boot/bootblock kernel > kernel.img
@@ -31,7 +33,7 @@ kernel: $(OBJS)
 # 定义的一些伪目标
 .PHONY: play clean debug
 play: kernel.img
-	-@git commit -m "> play" $(GITFLAGS) # KEEP IT
+	#-@git commit -m "> play" $(GITFLAGS) # KEEP IT
 	$(QEMU) -serial stdio kernel.img
 
 debug: kernel.img

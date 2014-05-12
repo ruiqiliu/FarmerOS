@@ -29,7 +29,7 @@ asm_do_irq:
 
 	pushl %esp
 	call irq_handle
-	addl $4, %esp
+	addl $4, %esp  #remove esp
 
 	popal
 	addl $4, %esp
