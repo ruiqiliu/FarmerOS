@@ -27,7 +27,7 @@
 asm_do_irq:
 	pushal
 
-	pushl %esp
+	pushl %esp  #pass esp pointer to the tf
 	call irq_handle
 	addl $4, %esp  #remove esp
 

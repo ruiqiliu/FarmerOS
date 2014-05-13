@@ -1,6 +1,6 @@
 #include "thread.h"
 #include "common.h"
-
+#include "device.h"
 #define THREAD_MAX_NUM 128
 
 //global structure
@@ -44,4 +44,8 @@ void lock(void){
 }
 void unlock(void){
 
+}
+
+void schedule(void){
+	printf("thread change\n");
 }

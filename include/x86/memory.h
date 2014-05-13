@@ -22,10 +22,10 @@ struct GateDescriptor {
 //Interrupt and exception frame
 // http://cslab.nju.edu.cn/opsystem/#OS2014_5
 struct TrapFrame {
-	uint32_t edi, esi, ebp, xxx, ebx, edx, ecx, eax;// no esp
+	uint32_t edi, esi, ebp, xxx, edx, ecx, ebx, eax;// no esp
 	int32_t irq;
-//	uint32_t gs, fs, es, ds;
-//	uint32_t err, eip, cs, eflags;
+//	uint32_t gs, fs, es, ds,err;
+	uint32_t  eip, cs, eflags;
 };
 typedef struct TrapFrame TrapFrame;
 

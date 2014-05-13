@@ -22,4 +22,5 @@ void wakeup(Thread *t);
 // 短临界区保护，实现关中断保护的原子操作
 void lock(void);
 void unlock(void);
+void schedule(void);
 #endif

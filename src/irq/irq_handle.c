@@ -1,6 +1,6 @@
 #include "x86.h"
 #include "device.h"
-
+#include "thread.h"
 void
 irq_handle(struct TrapFrame *tf) {
 	if(tf->irq < 1000){
@@ -14,6 +14,9 @@ irq_handle(struct TrapFrame *tf) {
 	}
 
 	if (tf->irq == 1000) {
+		//change current tf and call schedule
+
+		schedule();
 		printf(".");
 	} else if (tf->irq == 1001) {
 		uint32_t code = in_byte(0x60);
