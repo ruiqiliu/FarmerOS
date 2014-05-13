@@ -22,8 +22,6 @@ all: kernel.img
 kernel.img: kernel
 	@cd boot; make
 	cat boot/bootblock kernel > kernel.img
-#	-@git add . --ignore-errors &> /dev/null # KEEP IT
-#	-@(echo "> compile" && uname -a && uptime && pstree -A) | git commit -F - $(GITFLAGS) # KEEP IT
 
 kernel: $(OBJS)
 	$(LD) $(LDFLAGS) -e entry -Ttext 0x00100000 -o kernel $(OBJS)
@@ -33,7 +31,6 @@ kernel: $(OBJS)
 # 定义的一些伪目标
 .PHONY: play clean debug
 play: kernel.img
-	#-@git commit -m "> play" $(GITFLAGS) # KEEP IT
 	$(QEMU) -serial stdio kernel.img
 
 debug: kernel.img

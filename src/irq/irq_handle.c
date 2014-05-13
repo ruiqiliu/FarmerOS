@@ -15,7 +15,7 @@ irq_handle(struct TrapFrame *tf) {
 
 	if (tf->irq == 1000) {
 		//change current tf and call schedule
-
+		currentThread->tf = tf;
 		schedule();
 		printf(".");
 	} else if (tf->irq == 1001) {

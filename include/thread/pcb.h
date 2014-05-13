@@ -13,6 +13,7 @@ struct Thread{
 };
 typedef struct Thread Thread;
 
+extern Thread * currentThread;
 // 创建一个内核线程
 Thread *create_kthread(void (*entry)(void));
 // 使当前进程/线程立即阻塞，并可以在未来被唤醒
