@@ -5,16 +5,66 @@
 
 void init_thread();
 
+//test threading
+Thread * aptr = NULL;
+Thread * bptr = NULL;
+Thread * cptr = NULL;
+Thread * dptr = NULL;
 void a(void){
-	while(1)
-		printf("a");
+    int x = 0;
+    while(1) {
+        if(x % 100000 == 0) {
+            printf("a");
+            wakeup(bptr);
+            sleep();
+        }
+        x ++;
+    }
 }
 void b(void){
-	while(1)
-		printf("b");
+    int x = 0;
+    while(1) {
+        if(x % 100000 == 0) {
+            printf("b");
+            wakeup(cptr);
+            sleep();
+        }
+        x ++;
+    }
+}
+void c(void){
+    int x = 0;
+    while(1) {
+        if(x % 100000 == 0) {
+            printf("c");
+            wakeup(dptr);
+            sleep();
+        }
+        x ++;
+    }
+}
+void d(void){
+    int x = 0;
+    while(1) {
+        if(x % 100000 == 0) {
+            printf("d");
+            wakeup(aptr);
+            sleep();
+        }
+        x ++;
+    }
+}
+void grading(){
+	aptr = create_kthread(&a);
+	bptr = create_kthread(&b);
+	cptr = create_kthread(&c);
+	dptr = create_kthread(&d);
+
+	printf("a b c d %d %d %d %d\n",aptr->pid,bptr->pid,cptr->pid,dptr->pid);
 }
 void
 entry(void) {
+
 	init_timer();
 	init_idt();
 
@@ -23,11 +73,9 @@ entry(void) {
 	init_serial();
 	init_thread();
 
-	create_kthread(&a);
-	create_kthread(&b);
+	grading();
+
 	enable_interrupt();
-
-
 	while (1) {
 		wait_for_interrupt();
 	}

@@ -28,6 +28,7 @@ typedef struct list_head list_head;
 
 #define LIST_HEAD_INIT(name) { &(name), &(name) }
 
+/* define a tmp list_head*/
 #define LIST_HEAD(name) \
 	struct list_head name = LIST_HEAD_INIT(name)
 
@@ -193,6 +194,20 @@ static inline void list_splice_init(struct list_head *list,
  */
 #define list_entry(ptr, type, member) \
 	((type *)((char *)(ptr)-(unsigned long)(&((type *)0)->member)))
+
+/*
+ * return list entry number without counting head
+ */
+static inline int list_num(list_head *head){
+	list_head *pos = head->next;
+	int count = 0;
+	while(pos != head) {
+		count++;
+		pos = pos->next;
+	}
+	return count;
+}
+
 
 /**
  * list_for_each	-	iterate over a list

@@ -34,7 +34,6 @@ play: kernel.img
 	$(QEMU) -serial stdio kernel.img
 
 debug: kernel.img
-	-@git commit -m "> debug" $(GITFLAGS) # KEEP IT
 	$(QEMU) -serial stdio -s -S kernel.img
 
 clean:

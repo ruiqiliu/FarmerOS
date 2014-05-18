@@ -3,12 +3,18 @@
 
 #include "common.h"
 #include "x86.h"
+
+//thread state
+enum State{ READY, RUNNING, BLOCKED, TIME_WAIRTING};
+typedef enum State State;
+
 #define STK_SZ 1024*4
 struct Thread{
 	TrapFrame *tf;
 	uint32_t pid;
-	list_head runq, freeq;
-
+	list_head list;
+	char used;/* pcb used flag*/
+	State state;
 	char kstack[STK_SZ];
 };
 typedef struct Thread Thread;
