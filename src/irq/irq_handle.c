@@ -3,6 +3,7 @@
 #include "thread.h"
 void
 irq_handle(struct TrapFrame *tf) {
+	currentThread->tf = tf; // each time we should store the trapframe pointer
 	if(tf->irq < 1000){
 		if(tf->irq == -1){
 			printf("%s, %d: Unhandled exception %d! \n",__FUNCTION__,__LINE__, tf->irq);
@@ -15,7 +16,7 @@ irq_handle(struct TrapFrame *tf) {
 
 	if (tf->irq == 1000) {
 		//change current tf and call schedule
-		currentThread->tf = tf;
+
 		schedule();
 		printf(".");
 	} else if (tf->irq == 1001) {
