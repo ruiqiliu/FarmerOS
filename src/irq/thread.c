@@ -1,6 +1,7 @@
 #include "thread.h"
 #include "common.h"
 #include "device.h"
+#include "x86.h"
 #define THREAD_MAX_NUM 128
 
 //global structure
@@ -9,6 +10,8 @@ list_head runq, sleepq, freeq;
 Thread *currentThread;
 Thread *idle;
 
+//file scope
+static int lock_count = 0;
 
 /*
  * pid management functions
@@ -80,13 +83,20 @@ Thread *create_kthread(void (*entry)(void)){
 	tf->cs = (SEG_KERNEL_CODE)<<3;
 	tf->eip = (uint32_t)entry;
 	tf->eflags = 1 << 9; // set IF
-
+printf("runq thread num %d at %s\n",list_num(&runq),__FUNCTION__);
+printf("freeq thread num %d at %s\n",list_num(&freeq),__FUNCTION__);
 	return tmpThread;
 }
 // 使当前进程/线程立即阻塞，并可以在未来被唤醒
 void sleep(void){
-	list_del(&currentThread->list);// remove from from the runq
+	lock();
+assert(currentThread != idle);
+	list_del_init(&currentThread->list);// remove from the runq
+	currentThread->state = BLOCKED;
+printf("runq thread num %d\n",list_num(&runq));
 	list_add_tail(&currentThread->list,&sleepq);
+printf("sleepq thread num %d\n",list_num(&sleepq));
+	unlock();
 	wait_for_interrupt();
 }
 // 唤醒一个进程/线程
@@ -95,10 +105,13 @@ void wakeup(Thread *t){
 }
 // 短临界区保护，实现关中断保护的原子操作
 void lock(void){
-
+	disable_interrupt();
+	lock_count++;
 }
 void unlock(void){
-
+	lock_count--;
+	if(lock_count == 0)
+		enable_interrupt();
 }
 
 void schedule(void){
@@ -109,13 +122,12 @@ void schedule(void){
 	Thread * next = NULL;
 	if(list_empty(&runq)){
 		// runq is empty, run idle
-		currentThread = idle;
-		return ;
+		next = idle;
 	}else {
 		 if(prev == idle){
 			 //running thread is idle, choose a thread from runq;
 			 next = list_entry(runq.next, struct Thread, list);
-			 list_move_tail(&currentThread->list, &runq);
+	//		 list_move_tail(&currentThread->list, &runq);
 			 prev->state = READY;
 		 }else{
 			 // choose another thread from runq
@@ -133,8 +145,6 @@ void schedule(void){
 
 	next->state = RUNNING;
 	currentThread = next;
-
-
 
 
 }

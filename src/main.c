@@ -4,6 +4,9 @@
 #include "thread.h"
 
 void init_thread();
+//temperate  declaration
+extern	list_head runq;
+extern  list_head sleepq;
 
 //test threading
 Thread * aptr = NULL;
@@ -17,6 +20,8 @@ void a(void){
             printf("a");
             wakeup(bptr);
             sleep();
+printf("current thread id is %d\n",currentThread->pid);
+assert(!list_empty(&sleepq));
         }
         x ++;
     }
@@ -74,9 +79,11 @@ entry(void) {
 	init_thread();
 
 	grading();
-
+assert(list_empty(&sleepq));
+assert(list_num(&runq)==4);
 	enable_interrupt();
 	while (1) {
+		printf("idle thread\n");
 		wait_for_interrupt();
 	}
 	assert(0);
