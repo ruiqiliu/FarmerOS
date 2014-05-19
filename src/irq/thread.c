@@ -93,15 +93,24 @@ void sleep(void){
 assert(currentThread != idle);
 	list_del_init(&currentThread->list);// remove from the runq
 	currentThread->state = BLOCKED;
-printf("runq thread num %d\n",list_num(&runq));
+//printf("runq thread num %d\n",list_num(&runq));
 	list_add_tail(&currentThread->list,&sleepq);
-printf("sleepq thread num %d\n",list_num(&sleepq));
+//printf("sleepq thread num %d\n",list_num(&sleepq));
 	unlock();
 	wait_for_interrupt();
 }
 // 唤醒一个进程/线程
 void wakeup(Thread *t){
+	//delete it from sleepq and add it to the runq
+	lock();
+	if(t->state == BLOCKED){
+			list_del(&t->list);
+			currentThread->state = READY;
+			list_add_tail(&t->list,&runq);
+	}
 
+
+	unlock();
 }
 // 短临界区保护，实现关中断保护的原子操作
 void lock(void){
@@ -115,29 +124,33 @@ void unlock(void){
 }
 
 void schedule(void){
-	/*
-	 * if there is no runnable thread in the runq, run the idle thread
-	 */
+
 	Thread * prev = currentThread;
 	Thread * next = NULL;
+
 	if(list_empty(&runq)){
-		// runq is empty, run idle
+
 		next = idle;
-	}else {
+
+	} else {
+
 		 if(prev == idle){
 			 //running thread is idle, choose a thread from runq;
 			 next = list_entry(runq.next, struct Thread, list);
-	//		 list_move_tail(&currentThread->list, &runq);
 			 prev->state = READY;
-		 }else{
+		 } else {
 			 // choose another thread from runq
+			 list_head * head = NULL;
 			 if(prev->state != RUNNING){
-				 //previous thread end or blocked
+				 //previous thread end or blocked, and it is not in the runq
 				 next = list_entry(runq.next, struct Thread, list);
-				 list_move_tail(&currentThread->list, &runq);
-			 }else{
-				 next = list_entry(runq.next, struct Thread, list);
-				 list_move_tail(&currentThread->list, &runq);
+
+			 } else {
+				 head = prev->list.next;
+
+				 if(head == &runq) head = head->next;//discard runq head
+
+				 next = list_entry(head, struct Thread, list);
 				 prev->state = READY;
 			 }
 		 }

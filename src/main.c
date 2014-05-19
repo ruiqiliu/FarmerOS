@@ -20,8 +20,6 @@ void a(void){
             printf("a");
             wakeup(bptr);
             sleep();
-printf("current thread id is %d\n",currentThread->pid);
-assert(!list_empty(&sleepq));
         }
         x ++;
     }
