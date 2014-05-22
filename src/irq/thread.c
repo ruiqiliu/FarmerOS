@@ -83,22 +83,22 @@ Thread *create_kthread(void (*entry)(void)){
 	tf->cs = (SEG_KERNEL_CODE)<<3;
 	tf->eip = (uint32_t)entry;
 	tf->eflags = 1 << 9; // set IF
-printf("runq thread num %d at %s\n",list_num(&runq),__FUNCTION__);
-printf("freeq thread num %d at %s\n",list_num(&freeq),__FUNCTION__);
 	return tmpThread;
 }
+
+
 // 使当前进程/线程立即阻塞，并可以在未来被唤醒
 void sleep(void){
 	lock();
 assert(currentThread != idle);
 	list_del_init(&currentThread->list);// remove from the runq
 	currentThread->state = BLOCKED;
-//printf("runq thread num %d\n",list_num(&runq));
 	list_add_tail(&currentThread->list,&sleepq);
-//printf("sleepq thread num %d\n",list_num(&sleepq));
 	unlock();
 	wait_for_interrupt();
 }
+
+
 // 唤醒一个进程/线程
 void wakeup(Thread *t){
 	//delete it from sleepq and add it to the runq
@@ -112,6 +112,8 @@ void wakeup(Thread *t){
 
 	unlock();
 }
+
+
 // 短临界区保护，实现关中断保护的原子操作
 void lock(void){
 	disable_interrupt();
