@@ -6,4 +6,5 @@
 
 #define NULL         ((void*)0)
 
+#define CHAR_BIT 	8
 #endif

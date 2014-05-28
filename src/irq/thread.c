@@ -3,6 +3,11 @@
 #include "device.h"
 #include "x86.h"
 #define THREAD_MAX_NUM 128
+typedef uint32_t word_t;
+enum { BITS_PER_WORD = sizeof(word_t) * CHAR_BIT };
+#define WORD_OFFSET(b) ((b) / BITS_PER_WORD)
+#define BIT_OFFSET(b)  ((b) % BITS_PER_WORD)
+
 
 //global structure
 Thread pcbs[THREAD_MAX_NUM];
@@ -12,15 +17,53 @@ Thread *idle;
 
 //file scope
 static int lock_count = 0;
+static word_t pid_map[128/BITS_PER_WORD] = {0}; // all elements initialized to 0
+
+
+/*
+ * deal with bit map
+ */
+void set_bit(word_t *words, int n) {
+    words[WORD_OFFSET(n)] |= (1 << BIT_OFFSET(n));
+}
+
+void clear_bit(word_t *words, int n) {
+    words[WORD_OFFSET(n)] &= ~(1 << BIT_OFFSET(n));
+}
+
+int get_bit(word_t *words, int n) {
+    word_t bit = words[WORD_OFFSET(n)] & (1 << BIT_OFFSET(n));
+    return bit != 0;
+}  /* group of functions regarding bit map */
+
+
 
 /*
  * pid management functions
  */
 uint32_t getPID(){
-//TODO
-	static uint32_t cur = 0;
-	return cur++;
+/*
+ * 1. find the first zero bit in pid_map; if none, goto 4.
+ * 2. set it to 1
+ * 3. return the corresponding index
+ * 4. return -1
+ */
+	int index = 0;
+	for (; index < THREAD_MAX_NUM; index++){
+		if(get_bit(pid_map,index) == 0){
+			break;
+		}
+	}
+	if(index == THREAD_MAX_NUM) return -1;
+	set_bit(pid_map, index);
+	return index;
 }
+void retrievePID(uint32_t pid){
+	clear_bit(pid_map, pid);
+}
+
+
+
 /* 1. Initialize runq and sleepq
  * 2. Initialize the 0 thread
  *
@@ -65,8 +108,10 @@ Thread *create_kthread(void (*entry)(void)){
 	 * 3. initialize pcb
 	 */
 	uint32_t pid = getPID();
-	//TODO check pid
-
+	//check pid
+	if(pid == -1){// there is no more pcb to be used
+		return NULL;
+	}
 	Thread * tmpThread = &pcbs[pid];
 	tmpThread->pid = pid;
 	list_del(&tmpThread->list);

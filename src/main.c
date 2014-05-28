@@ -13,6 +13,8 @@ Thread * aptr = NULL;
 Thread * bptr = NULL;
 Thread * cptr = NULL;
 Thread * dptr = NULL;
+Thread * eptr = NULL;
+void e(void);
 void a(void){
     int x = 0;
     while(1) {
@@ -48,11 +50,22 @@ void c(void){
 }
 void d(void){
     int x = 0;
+	eptr = create_kthread(&e);
+	printf("a b c d e %d %d %d %d %d\n",aptr->pid,bptr->pid,cptr->pid,dptr->pid,eptr->pid);
     while(1) {
         if(x % 100000 == 0) {
             printf("d");
             wakeup(aptr);
             sleep();
+        }
+        x ++;
+    }
+}
+void e(void){
+    int x = 0;
+    while(1) {
+        if(x % 100000 == 0) {
+            printf("Y");
         }
         x ++;
     }
@@ -63,7 +76,7 @@ void grading(){
 	cptr = create_kthread(&c);
 	dptr = create_kthread(&d);
 
-	printf("a b c d %d %d %d %d\n",aptr->pid,bptr->pid,cptr->pid,dptr->pid);
+	printf("a b c d e %d %d %d %d %d\n",aptr->pid,bptr->pid,cptr->pid,dptr->pid,eptr->pid);
 }
 void
 entry(void) {
